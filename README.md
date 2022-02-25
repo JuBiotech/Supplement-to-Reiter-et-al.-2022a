@@ -1,4 +1,4 @@
-# Supplement code
+# Supplement-to-Reiter-et-al.-2022a
 
 Metabolites
 
