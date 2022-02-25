@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6275893.svg)](https://doi.org/10.5281/zenodo.6275893)
+
 # Supplement-to-Reiter-et-al.-2022a
 
 Metabolites
