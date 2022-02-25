@@ -1,4 +1,3 @@
-[![DOI](https://zenodo.org/badge/463399019.svg)](https://zenodo.org/badge/latestdoi/463399019)
 # Supplement-to-Reiter-et-al.-2022a
 
 Metabolites
