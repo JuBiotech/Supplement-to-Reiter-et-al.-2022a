@@ -5458,17 +5458,17 @@ class ChemometricsPLSDA(ChemometricsPLS, ClassifierMixin):
             perm_testmisclassifiedsamples = list()
 
             if self.n_classes == 2:
-                perm_trainroc_fpr = numpy.zeros((nperms, len(y),))
+                perm_trainroc_fpr = numpy.zeros((nperms, len(y), 1))
                 perm_trainroc_fpr[:] = numpy.nan
-                perm_trainroc_tpr = numpy.zeros((nperms, len(y),))
+                perm_trainroc_tpr = numpy.zeros((nperms, len(y), 1))
                 perm_trainroc_tpr[:] = numpy.nan
-                perm_trainauc = numpy.zeros((nperms,))
+                perm_trainauc = numpy.zeros((nperms, 1))
 
-                perm_testroc_fpr = numpy.zeros((nperms, len(y),))
+                perm_testroc_fpr = numpy.zeros((nperms, len(y), 1))
                 perm_testroc_fpr[:] = numpy.nan
-                perm_testroc_tpr = numpy.zeros((nperms, len(y),))
+                perm_testroc_tpr = numpy.zeros((nperms, len(y), 1))
                 perm_testroc_tpr[:] = numpy.nan
-                perm_testauc = numpy.zeros((nperms,))
+                perm_testauc = numpy.zeros((nperms, 1))
             else:
                 perm_trainroc_fpr = numpy.zeros((nperms, len(y), y_nvars))
                 perm_trainroc_fpr[:] = numpy.nan
@@ -5530,20 +5530,20 @@ class ChemometricsPLSDA(ChemometricsPLS, ClassifierMixin):
             
                 if n_classes == 2:
                     # ROC AUC
-                    fpr_train_mean = numpy.nanmean(permute_class.cvParameters['DA']['CV_TrainROC_fpr'].T[0], axis = 0)
-                    tpr_train_mean = numpy.nanmean(permute_class.cvParameters['DA']['CV_TrainROC_tpr'].T[0], axis = 0)
+                    fpr_train_mean = numpy.nanmean(permute_class.cvParameters['DA']['CV_TrainROC_fpr'], axis = 0)
+                    tpr_train_mean = numpy.nanmean(permute_class.cvParameters['DA']['CV_TrainROC_tpr'], axis = 0)
                     auc_train_mean = numpy.nanmean(permute_class.cvParameters['DA']['CV_TrainAUC'], axis = 0)
 
-                    fpr_test_mean = numpy.nanmean(permute_class.cvParameters['DA']['CV_TestROC_fpr'].T[0], axis = 0)
-                    tpr_test_mean = numpy.nanmean(permute_class.cvParameters['DA']['CV_TestROC_tpr'].T[0], axis = 0)
+                    fpr_test_mean = numpy.nanmean(permute_class.cvParameters['DA']['CV_TestROC_fpr'], axis = 0)
+                    tpr_test_mean = numpy.nanmean(permute_class.cvParameters['DA']['CV_TestROC_tpr'], axis = 0)
                     auc_test_mean = numpy.nanmean(permute_class.cvParameters['DA']['CV_TestAUC'], axis = 0)
 
-                    perm_trainroc_fpr[permutation, :len(fpr_train_mean)] = fpr_train_mean
-                    perm_trainroc_tpr[permutation, :len(tpr_train_mean)] = tpr_train_mean
+                    perm_trainroc_fpr[permutation, :len(fpr_train_mean), 0] = fpr_train_mean
+                    perm_trainroc_tpr[permutation, :len(tpr_train_mean), 0] = tpr_train_mean
                     perm_trainauc[permutation] = auc_train_mean
 
-                    perm_testroc_fpr[permutation, :len(fpr_test_mean)] = fpr_test_mean
-                    perm_testroc_tpr[permutation, :len(tpr_test_mean)] = tpr_test_mean
+                    perm_testroc_fpr[permutation, :len(fpr_test_mean), 0] = fpr_test_mean
+                    perm_testroc_tpr[permutation, :len(tpr_test_mean), 0] = tpr_test_mean
                     perm_testauc[permutation] = auc_test_mean
                 else:
                     # ROC AUC
@@ -5753,17 +5753,17 @@ class ChemometricsPLSDA(ChemometricsPLS, ClassifierMixin):
             boot_testmisclassifiedsamples = list()
 
             if self.n_classes == 2:
-                boot_trainroc_fpr = numpy.zeros((nboots, len(y),))
+                boot_trainroc_fpr = numpy.zeros((nboots, len(y), 1))
                 boot_trainroc_fpr[:] = numpy.nan
-                boot_trainroc_tpr = numpy.zeros((nboots, len(y),))
+                boot_trainroc_tpr = numpy.zeros((nboots, len(y), 1))
                 boot_trainroc_tpr[:] = numpy.nan
-                boot_trainauc = numpy.zeros((nboots,))
+                boot_trainauc = numpy.zeros((nboots, 1))
 
-                boot_testroc_fpr = numpy.zeros((nboots, len(y),))
+                boot_testroc_fpr = numpy.zeros((nboots, len(y), 1))
                 boot_testroc_fpr[:] = numpy.nan
-                boot_testroc_tpr = numpy.zeros((nboots, len(y),))
+                boot_testroc_tpr = numpy.zeros((nboots, len(y), 1))
                 boot_testroc_tpr[:] = numpy.nan
-                boot_testauc = numpy.zeros((nboots,))
+                boot_testauc = numpy.zeros((nboots, 1))
             else:
                 boot_trainroc_fpr = numpy.zeros((nboots, len(y), y_nvars))
                 boot_trainroc_fpr[:] = numpy.nan
@@ -5875,8 +5875,6 @@ class ChemometricsPLSDA(ChemometricsPLS, ClassifierMixin):
                 class_score = ChemometricsPLS.predict(bootstrap_pipeline, xtest)
 
                 # DA parameter
-                
-
                 if n_classes == 2:
                     boot_testaccuracy[boot_i] = metrics.accuracy_score(ytest, y_pred)
                     boot_testprecision[boot_i] = metrics.precision_score(ytest, y_pred)
@@ -5886,17 +5884,17 @@ class ChemometricsPLSDA(ChemometricsPLS, ClassifierMixin):
                     boot_testmatthews_mcc[boot_i] = metrics.matthews_corrcoef(ytest, y_pred)
 
                     # ROC AUC
-                    fpr_mean = bootstrap_pipeline.modelParameters['DA']['ROC_fpr'].T[0]
-                    tpr_mean = bootstrap_pipeline.modelParameters['DA']['ROC_tpr'].T[0]
+                    fpr_mean = bootstrap_pipeline.modelParameters['DA']['ROC_fpr']
+                    tpr_mean = bootstrap_pipeline.modelParameters['DA']['ROC_tpr']
                     auc_mean = bootstrap_pipeline.modelParameters['DA']['AUC']
 
-                    boot_trainroc_fpr[boot_i, :len(fpr_mean)] = fpr_mean
-                    boot_trainroc_tpr[boot_i, :len(tpr_mean)] = tpr_mean
-                    boot_trainauc[boot_i] = auc_mean
+                    boot_trainroc_fpr[boot_i, :len(fpr_mean), 0] = fpr_mean[:,0]
+                    boot_trainroc_tpr[boot_i, :len(tpr_mean), 0] = tpr_mean[:,0]
+                    boot_trainauc[boot_i] = auc_mean[0]
 
                     fpr, tpr, _ = metrics.roc_curve(ytest, class_score.ravel(), drop_intermediate = False)
-                    boot_testroc_fpr[boot_i, :len(fpr)] = fpr
-                    boot_testroc_tpr[boot_i, :len(tpr)] = tpr
+                    boot_testroc_fpr[boot_i, :len(fpr), 0] = fpr
+                    boot_testroc_tpr[boot_i, :len(tpr), 0] = tpr
                     boot_testauc[boot_i] = metrics.auc(fpr, tpr)
 
                 else:
@@ -9011,6 +9009,10 @@ def scan_mv_pls_rocauc(model, labels_group):
     # Preallocate
     dict_rocauc = {}
     
+    # Account for two classes
+    if len(labels_group) == 2:
+        labels_group = ["0"]
+
     # Train
     array_train_fpr_mean = numpy.nanmean(model.bootstrapParameters['DA']['boot_TrainROC_fpr'], axis = 0)
     array_train_tpr_mean = numpy.nanmean(model.bootstrapParameters['DA']['boot_TrainROC_tpr'], axis = 0)
@@ -9844,6 +9846,10 @@ def scan_mv_pls_roc_plot_full(dict_roc, labels_group, inp):
     df_test_roc = dict_roc['TestROC'].copy()
     df_test_auc = dict_roc['TestAUC'].copy()
 
+    # Account for two classes
+    if len(labels_group) == 2:
+        labels_group = ["0"]
+        
     for item in labels_group:
         auc_train_mean = numpy.round(df_train_auc.at[0, item+'_auc_mean'],5)
         auc_test_mean = numpy.round(df_test_auc.at[0, item+'_auc_mean'],5)
